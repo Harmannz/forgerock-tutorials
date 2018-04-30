@@ -17,6 +17,12 @@
     dest: /etc/profile.d/prompt.sh
     mode: 0755
 
+- name: Set JAVA_HOME environment variable
+  lineinfile:
+    path: /etc/environment
+    regexp: '^JAVA_HOME'
+    line: JAVA_HOME=/usr/lib/jvm/jre-1.8.0
+
 - name: install packages
   package:
     name: "{{ item }}"

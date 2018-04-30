@@ -72,6 +72,21 @@
     - /opt/openam/bin
     - /opt/openam/sso
 
+- name: Tools directories
+  file:
+    path: /opt/openamTools/{{ item }}
+    state: directory
+  with_items:
+    - amster
+
+
+- name: Tools exxtracted
+  unarchive:
+    src: /vagrant/SOURCES/{{ item.archive }}
+    dest: /opt/openamTools/{{ item.path }}
+  with_items:
+    - { archive: 'Amster-5.5.0.zip', path: 'amster'}
+
 - name: Start tomcat
   service:
     name: tomcat

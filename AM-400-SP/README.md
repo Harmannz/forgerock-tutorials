@@ -4,7 +4,7 @@ The platform directory contains the environment setup and configuration for Forg
 
 ## Getting Started
 
-- You need [AM-5.5.1 war](https://backstage.forgerock.com/get/am/am/am-war/5.5.1/) downloaded to the platform/SOURCES directory.
+- You need [AM-5.5.1 war](https://backstage.forgerock.com/get/am/am/am-war/5.5.1/) and [Amster](https://backstage.forgerock.com/get/am/amster/amster-zip/5.5.0/) downloaded to the platform/SOURCES directory.
 
 Run `vagrant up` in the platform directory to initialise a vagrant VM.
 
