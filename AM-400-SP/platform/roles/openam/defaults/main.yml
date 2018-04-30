@@ -1,0 +1,8 @@
+# https://backstage.forgerock.com/docs/am/5.5/install-guide/index.html#prepare-apache-tomcat
+# if we are including the embedded DS for OpenAM we need 2GB of heap, otherwise 1GB of heap is sufficient.
+debug_environment: yes
+
+jvm:
+  tomcat_openam:
+    heap: 2048m
+    metaspace: 256m

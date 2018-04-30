@@ -1,0 +1,2 @@
+[app]
+app.am400sp.harmannz.github.io ansible_host=10.123.10.3  ansible_connection=local

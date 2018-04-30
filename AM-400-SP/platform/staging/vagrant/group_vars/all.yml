@@ -1,0 +1,16 @@
+---
+sources: /vagrant/SOURCES
+java_version: 1.8.0
+
+openam_http_port: 9000
+wildfly_version: 10.0.0.Final
+wildfly_name: wildfly-{{ wildfly_version }}
+
+wildfly_dir: /opt/wildfly
+tmp_wildfly_dir: /tmp/wildfly-{{ wildfly_version }}.tar.gz
+
+wildfly_run_scipt: "{{ wildfly_dir }}/bin/run.sh"
+
+
+wildfly_admin: admin
+wildfly_password: password

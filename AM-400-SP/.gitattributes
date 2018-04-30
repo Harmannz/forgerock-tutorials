@@ -1,0 +1,14 @@
+# vagrant files need to be linux
+* text eol=lf
+
+# actually binary files
+*.png binary
+*.jpg binary
+*.jar binary
+*.jks binary
+*.eot binary
+*.woff binary
+*.ttf binary
+*.pdn binary
+*.gif binary
+*.kdbx binary

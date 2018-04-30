@@ -1,0 +1,78 @@
+---
+- name: Install tomcat
+  package:
+    name:
+     - tomcat
+     - tomcat-webapps
+    state: latest
+  notify: Restart Tomcat
+
+- name: Enable tomcat service
+  systemd:
+    name: tomcat
+    enabled: yes
+    state: started
+
+- name: Configure Tomcat
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  notify:
+    - Restart Tomcat
+  with_items:
+    - { src: tomcat/logrotate.conf.j2, dest: /etc/logrotate.d/tomcat }
+    - { src: tomcat/server.xml.j2, dest: /etc/tomcat/server.xml  }
+    - { src: tomcat/logging.properties.j2, dest: /etc/tomcat/logging.properties  }
+    - { src: tomcat/sysconfig.j2, dest: /etc/sysconfig/tomcat  }
+
+- name: Get details of new OpenAM deployment
+  stat:
+    path: "{{ sources }}/AM-5.5.1.war"
+  register: new_openam_st
+  changed_when: no
+
+- name: Check for existing OpenAM deployment
+  stat:
+    path: /var/lib/tomcat/webapps/sso.war
+  register: existing_openam_st
+  changed_when: no
+
+- block:
+    - name: Stop Tomcat
+      service:
+        name: tomcat
+        state: stopped
+
+    - name: Remove existing OpenAM deployment
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /var/lib/tomcat/webapps/sso.war
+        - /var/lib/tomcat/webapps/sso
+  when: existing_openam_st.stat.checksum is defined and existing_openam_st.stat.checksum != new_openam_st.stat.checksum
+
+- name: Deploy OpenAM
+  copy:
+    src: "{{ sources }}/AM-5.5.1.war"
+    dest: /var/lib/tomcat/webapps/sso.war
+    remote_src: yes
+    owner: tomcat
+    group: tomcat
+
+- name: Create OpenAM directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: tomcat
+    group: tomcat
+  with_items:
+    - /opt/openam
+    - /opt/openam/bin
+    - /opt/openam/sso
+
+- name: Start tomcat
+  service:
+    name: tomcat
+    state: started

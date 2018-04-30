@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+{{ ansible_managed | comment('xml') }}
+<Server port="8005" shutdown="SHUTDOWN">
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    <Listener className="org.apache.catalina.core.JasperListener" />
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+    <!-- TODO: REMOVE THIS to prevent access to tomcat/manager -->
+    <GlobalNamingResources>
+        <Resource name="UserDatabase" auth="Container"
+            type="org.apache.catalina.UserDatabase"
+            description="User database that can be updated and saved"
+            factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+            pathname="conf/tomcat-users.xml" />
+    </GlobalNamingResources>
+
+    <Service name="OpenAM">
+        <Connector port="{{ openam_http_port }}" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            address="{{ hostvars[inventory_hostname].ansible_host }}"
+            URIEncoding="UTF-8" />
+
+        <Engine name="Catalina" defaultHost="localhost">
+            <Host name="localhost"  appBase="webapps"
+                unpackWARs="true" autoDeploy="false">
+                <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                    prefix="localhost_access_log_openam" suffix=".log" rotatable="false"
+                    pattern="%h %l %u %t %I &quot;%r&quot; %s %b %D" />
+            </Host>
+        </Engine>
+    </Service>
+</Server>

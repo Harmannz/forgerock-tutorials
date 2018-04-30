@@ -1,0 +1,27 @@
+---
+- name: Copy bash prompt
+  copy:
+    src: bash-prompt-xterm
+    dest: /etc/sysconfig/bash-prompt-xterm
+    mode: 0755
+
+- name: Copy bashrc
+  copy:
+    src: bashrc
+    dest: /etc/bashrc
+    mode: 0755
+
+- name: Configure prompt.sh
+  template:
+    src: prompt.sh.j2
+    dest: /etc/profile.d/prompt.sh
+    mode: 0755
+
+- name: install packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - vim
+    - unzip
+    - nano

@@ -1,0 +1,59 @@
+---
+- name: Install Java
+  yum:
+    name={{item}}
+    state=present
+  with_items:
+   - java-{{ java_version }}-openjdk
+
+- name: Download WildFly tarball from jboss.org
+  get_url:
+    url: http://download.jboss.org/wildfly/{{ wildfly_version}}/{{ wildfly_name }}.tar.gz
+    dest: "{{ tmp_wildfly_dir }}"
+
+- name: Create new wildfly folder
+  file:
+    path: /opt/wildfly
+    state: "{{ item }}"
+  with_items:
+    - absent
+    - directory
+
+- name: Extract wildfly into wildfly folder
+  unarchive:
+    src: /tmp/wildfly-{{ wildfly_version }}.tar.gz
+    dest: /opt/wildfly
+    extra_opts: ['--strip-components=1']
+    copy: no
+
+- name: Copy wildfly standalone configuration
+  template:
+    src: standalone.conf.j2
+    dest: /opt/wildfly/bin/standalone.conf
+
+- name: Copy wildfly standalone xml
+  template:
+    src: standalone.xml.j2
+    dest: /opt/wildfly/standalone/configuration/standalone.xml
+    
+- name: Copy wildfly run script
+  template:
+    src: run.sh.j2
+    dest: /opt/wildfly/bin/run.sh
+    mode: 0755
+
+- name: Copy wildfly service
+  template:
+    src: wildfly.service.j2
+    dest: /usr/lib/systemd/system/wildfly.service
+    mode: 0755
+
+- name: add wildfly user
+  command: /opt/wildfly/bin/add-user.sh {{ wildfly_admin }} {{wildfly_password}}
+  
+- name: Start wildfly service
+  service:
+    name: wildfly
+    state: started
+    enabled: yes
+
