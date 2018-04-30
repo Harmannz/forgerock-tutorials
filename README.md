@@ -1,6 +1,6 @@
 # ForgeRock Tutorials
 
-My attemt at the ForgeRock tutorials from forgerock university
+My attempt at ForgeRock tutorials from forgerock university
 
 ## Access Manager
 
