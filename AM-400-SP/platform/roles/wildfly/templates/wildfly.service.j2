@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=root
-Group=root
-ExecStart={{ wildfly_run_scipt }}
+User=wildfly
+Group=wildfly
+ExecStart=/opt/wildfly/bin/run.sh
 
 [Install]
 WantedBy=multi-user.target

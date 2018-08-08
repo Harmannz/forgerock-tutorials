@@ -1,0 +1,6 @@
+---
+app_host: app.am400sp.harmannz.github.io
+sso_host: sso.am400sp.harmannz.github.io
+wildfly_admin_user: admin
+
+artifacts_location: /vagrant/SOURCES

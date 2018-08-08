@@ -1,33 +1,18 @@
 ---
-- name: Install tomcat
-  package:
-    name:
-     - tomcat
-     - tomcat-webapps
-    state: latest
-  notify: Restart Tomcat
+- name: Create openam group
+  group:
+    name: openam
+    state: present
 
-- name: Enable tomcat service
-  systemd:
-    name: tomcat
-    enabled: yes
-    state: started
-
-- name: Configure Tomcat
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  notify:
-    - Restart Tomcat
-  with_items:
-    - { src: tomcat/logrotate.conf.j2, dest: /etc/logrotate.d/tomcat }
-    - { src: tomcat/server.xml.j2, dest: /etc/tomcat/server.xml  }
-    - { src: tomcat/logging.properties.j2, dest: /etc/tomcat/logging.properties  }
-    - { src: tomcat/sysconfig.j2, dest: /etc/sysconfig/tomcat  }
+- name: Create openam user
+  user:
+    group: openam
+    name: openam
+    state: present
 
 - name: Get details of new OpenAM deployment
   stat:
-    path: "{{ sources }}/AM-5.5.1.war"
+    path: "{{ artifacts_location }}/AM-6.0.0.2.war"
   register: new_openam_st
   changed_when: no
 
@@ -50,27 +35,25 @@
       with_items:
         - /var/lib/tomcat/webapps/sso.war
         - /var/lib/tomcat/webapps/sso
-  when: existing_openam_st.stat.checksum is defined and existing_openam_st.stat.checksum != new_openam_st.stat.checksum
 
-- name: Deploy OpenAM
-  copy:
-    src: "{{ sources }}/AM-5.5.1.war"
-    dest: /var/lib/tomcat/webapps/sso.war
-    remote_src: yes
-    owner: tomcat
-    group: tomcat
+    - name: Deploy OpenAM
+      copy:
+        src: "{{ artifacts_location }}/AM-6.0.0.war"
+        dest: /var/lib/tomcat/webapps/sso.war
+        remote_src: yes
+        owner: tomcat
+        group: tomcat
 
-- name: Create OpenAM directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    recurse: yes
-    owner: tomcat
-    group: tomcat
-  with_items:
-    - /opt/openam
-    - /opt/openam/bin
-    - /opt/openam/sso
+    - name: Create OpenAM directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        recurse: yes
+        owner: tomcat
+        group: tomcat
+      with_items:
+        - /opt/openam
+  when: existing_openam_st.stat.checksum is not defined or existing_openam_st.stat.checksum != new_openam_st.stat.checksum
 
 - name: Tools directories
   file:
@@ -79,15 +62,28 @@
   with_items:
     - amster
 
-
-- name: Tools exxtracted
+- name: Tools extracted
   unarchive:
-    src: /vagrant/SOURCES/{{ item.archive }}
+    src: "{{ artifacts_location }}/{{ item.archive }}"
     dest: /opt/openamTools/{{ item.path }}
+    owner: openam
+    group: openam
   with_items:
-    - { archive: 'Amster-5.5.0.zip', path: 'amster'}
+    - { archive: 'Amster-6.0.0.zip', path: 'amster'}
 
 - name: Start tomcat
   service:
     name: tomcat
-    state: started
+    state: restarted
+    enabled: yes
+
+- name: copy openam amster file
+  template:
+    src: openam_config.amster.j2
+    dest: /opt/openamTools/openam_config.amster
+    owner: openam
+    group: openam
+
+- name: Setup OpenAM
+  command: "/opt/openamTools/amster/amster /opt/openamTools/openam_config.amster"
+

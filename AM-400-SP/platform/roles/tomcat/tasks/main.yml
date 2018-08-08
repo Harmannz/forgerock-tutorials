@@ -1,0 +1,17 @@
+---
+- name: Install tomcat
+  package:
+    name:
+     - tomcat
+     - tomcat-webapps
+     - tomcat-admin-webapps
+    state: latest
+
+- name: Configure Tomcat
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  notify:
+    - Restart Tomcat
+  with_items:
+    - { src: tomcat/server.xml.j2, dest: /etc/tomcat/server.xml  }

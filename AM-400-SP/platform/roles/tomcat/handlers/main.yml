@@ -3,4 +3,5 @@
   service:
     name: tomcat
     state: restarted
+    enabled: yes
 

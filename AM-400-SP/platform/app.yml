@@ -1,7 +1,11 @@
-
+---
 - hosts: app
   become: yes
   roles:
-    - common
     - wildfly
+
+- hosts: openam
+  become: yes
+  roles:
+    - tomcat
     - openam

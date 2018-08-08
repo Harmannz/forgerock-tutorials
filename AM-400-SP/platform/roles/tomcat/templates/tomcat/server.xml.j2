@@ -17,12 +17,14 @@
     </GlobalNamingResources>
 
     <Service name="OpenAM">
-        <Connector port="{{ openam_http_port }}" protocol="HTTP/1.1"
+        <Connector port="9990" protocol="HTTP/1.1"
+        
             connectionTimeout="20000"
             address="{{ hostvars[inventory_hostname].ansible_host }}"
             URIEncoding="UTF-8" />
 
         <Engine name="Catalina" defaultHost="localhost">
+        <Realm className="org.apache.catalina.realm.MemoryRealm" />
             <Host name="localhost"  appBase="webapps"
                 unpackWARs="true" autoDeploy="false">
                 <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"

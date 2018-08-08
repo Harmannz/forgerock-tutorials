@@ -1,2 +1,8 @@
+[web]
+web.am400sp.harmannz.github.io ansible_host=10.123.10.3 ansible_connection=local
+
 [app]
-app.am400sp.harmannz.github.io ansible_host=10.123.10.3  ansible_connection=local
+app.am400sp.harmannz.github.io ansible_host=10.123.10.4 ansible_connection=local
+
+[openam]
+sso.am400sp.harmannz.github.io ansible_host=10.123.10.5 ansible_connection=local
