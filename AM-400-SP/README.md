@@ -36,7 +36,7 @@ Web: https://web.am400sp.harmannz.github.io/app/index.xhtml
 - Goes to Apache which proxy passes to the app
 
 AM: http://sso.am400sp.harmannz.github.io:9990/sso/XUI/#login/
-- Takes you to AM login. Default username: *amadmin*. Default password: *password*
+- Takes you to AM login. Default username: *amadmin*. Default password: *Password12*
 - Tomcat: http://sso.am400sp.harmannz.github.io:9990
 
 Wildfly (13): http://app.am400sp.harmannz.github.io:9990/
